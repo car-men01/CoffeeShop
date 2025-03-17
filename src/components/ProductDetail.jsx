@@ -1,0 +1,174 @@
+import React, { useContext, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { ProductContext } from "../ProductContext";
+
+const ProductDetail = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    const { products, setProducts } = useContext(ProductContext);
+
+    const { deleteProduct } = useContext(ProductContext); // Get delete function from context
+    const { updateProduct } = useContext(ProductContext); // Get update function from context
+
+    const [showConfirmModal, setShowConfirmModal] = useState(false); // State for delete confirmation modal
+
+    const product = products.find(p => p.id === parseInt(id));
+
+    if (!product) return <h2 className="product-not-found">Product not found</h2>;
+
+    const handleDelete = () => {
+        setShowConfirmModal(true); // Show confirmation modal
+    };
+
+    const confirmDelete = () => {
+        deleteProduct(parseInt(id));  // Delete product
+        navigate("/menu");  // Redirect to menu
+    };
+
+    const handleUpdate = (updatedFields) => {
+        const updatedProduct = { ...product, ...updatedFields };
+        updateProduct(updatedProduct);
+        navigate("/menu");  // Redirect to menu after saving
+    };
+
+    return (
+        <div>
+            <div className="title-detail">
+                <h1 className="welcome-title-product">Welcome to {product.name} product detail page!</h1>
+                <hr className="detail-devider" />
+            </div>
+            <div className="product-detail-container">
+                <div className="delete-container">
+                    <img className="product-image" src={product.image} alt={product.name} />
+                    <div className="title-and-info">
+                        <h2 className="delete-p-title">Delete the selected product</h2>
+                        <div className="product-info">
+                            <h1 className="product-title">{product.name}</h1>
+                            <p className="product-category">Category: {product.category}</p>
+                            <p className="product-description">{product.description}</p>
+                            <p className="product-price"><strong>{product.price} €</strong></p>
+                            <button className="delete-button" onClick={handleDelete}>Delete</button>
+                        </div>
+                    </div>
+                </div>
+                <hr className="detail-devider" />
+                <div className="update-container">
+                    <div className="title-and-form">
+                        <h2 className="update-p-title">Edit the selected product</h2>
+                        <UpdateForm product={product} onUpdate={handleUpdate} />
+                    </div>
+                    <img className="product-image" src={product.image} alt={product.name} />
+                </div>
+            </div>
+
+            {/* Delete Confirmation Modal */}
+            {showConfirmModal && (
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <p className="modal-text">Are you sure you want to delete this product?</p>
+                        <div className="modal-buttons">
+                            <button className="modal-delete-button" onClick={confirmDelete}>Delete</button>
+                            <button className="modal-cancel-button" onClick={() => setShowConfirmModal(false)}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+const UpdateForm = ({ product, onUpdate }) => {
+    const [formData, setFormData] = useState({
+        name: product.name,
+        price: product.price,
+        description: product.description,
+    });
+
+    const navigate = useNavigate();
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        // Trim input values to avoid leading/trailing spaces
+        const name = formData.name.trim();
+        const price = formData.price.trim();
+        const description = formData.description.trim();
+
+        // Check if all fields are filled
+        if (!name || !price || !description) {
+            alert("Please fill in all fields!");
+            return;
+        }
+
+        // Check if name and description are at least 3 characters long
+        if (name.length < 3) {
+            alert("Product name must be at least 3 characters long!");
+            return;
+        }
+
+        if (description.length < 3) {
+            alert("Description must be at least 3 characters long!");
+            return;
+        }
+
+        // Validate price: should be a valid float
+        const parsedPrice = parseFloat(price);
+        if (isNaN(parsedPrice) || parsedPrice <= 0) {
+            alert("Please enter a valid price (e.g., 5 or 4.99)!");
+            return;
+        }
+
+        // Ensure name contains only letters and symbols (no numbers)
+        const containsNumbers = (str) => str.split("").some(char => !isNaN(char) && char !== " ");
+        if (containsNumbers(name)) {
+            alert("Product name must only contain letters and symbols, no numbers!");
+            return;
+        }
+
+        // If all checks pass, update the product
+        onUpdate({ name, price: parsedPrice, description });
+    };
+
+    const handleCancel = () => {
+        // Reset the form to the original product data
+        setFormData({
+            name: product.name,
+            price: product.price,
+            description: product.description,
+        });
+    };
+
+    return (
+        <form className="update-form" onSubmit={handleSubmit}>
+            <label>Product name</label>
+            <input
+                className="form-input"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+            />
+            <label>Price</label>
+            <input
+                className="form-input"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+            />
+            <label>Description</label>
+            <textarea
+                className="form-textarea"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+            />
+            <button className="form-button" type="submit">Save changes</button>
+            <button className="form-button cancel-button" type="button" onClick={handleCancel}>Cancel</button>
+        </form>
+    );
+};
+
+export default ProductDetail;
