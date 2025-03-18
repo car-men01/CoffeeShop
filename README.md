@@ -4,7 +4,7 @@ This project represents a website of a Coffee Shop, made using REACT, JavaScript
 
 ## Functionalities
 
-The website has 4 pages: Main Page, Menu Page, Add a product page, Product detail page.
+The website has 4 pages: Main page, Menu page, Add a product page, Product detail page.
 
 ### CRUD operations
 
