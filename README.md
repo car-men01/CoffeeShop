@@ -1,8 +1,17 @@
 # Coffee Shop - Pirate Cafe
 
-This project represents a website of a Coffee Shop, made using REACT, JavaScript, HTML and CSS. \
-When a user opens the website he will land on the main page. From there, a user can go to the Menu page and look through the menu, search and filter menu items 
+This project represents a website of a Coffee Shop, made using REACT, JavaScript, HTML and CSS. 
 
-### Functionalities
+## Functionalities
 
+The website has 4 pages: Main Page, Menu Page, Add a product page, Product detail page.
 
+# CRUD operations
+
+_Menu_ - Allows the user to view all the products from the shop
+_Add a product_ - Allows the user to add a new product to the menu 
+_Product Details_ - When clicking on a product from the menu, the user will be redirected to the product detail page, where he can delte or update the selected product
+
+# Searchinig, Filtering and Sorting
+
+On the Menu page, the user can search for a specific product by its name or description. Additionally, the user can filter the products by their category, or sort the products by their price in a given category.
