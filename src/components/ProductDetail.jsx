@@ -21,8 +21,8 @@ const ProductDetail = () => {
     };
 
     const confirmDelete = () => {
-        deleteProduct(parseInt(id));  // Delete product
-        navigate("/menu");  // Redirect to menu
+        deleteProduct(parseInt(id)); 
+        navigate("/menu");  // Redirect to menu after deleting
     };
 
     const handleUpdate = (updatedFields) => {
@@ -45,9 +45,9 @@ const ProductDetail = () => {
                         <div className="product-info">
                             <h1 className="product-title">{product.name}</h1>
                             <p className="product-category">Category: {product.category}</p>
-                            <p className="product-description">{product.description}</p>
+                            <p data-testid="product-description" className="product-description">{product.description}</p>
                             <p className="product-price"><strong>{product.price} €</strong></p>
-                            <button className="delete-button" onClick={handleDelete}>Delete</button>
+                            <button id="delete" className="delete-button" onClick={handleDelete}>Delete</button>
                         </div>
                     </div>
                 </div>
@@ -67,7 +67,7 @@ const ProductDetail = () => {
                     <div className="modal">
                         <p className="modal-text">Are you sure you want to delete this product?</p>
                         <div className="modal-buttons">
-                            <button className="modal-delete-button" onClick={confirmDelete}>Delete</button>
+                            <button id="delete" className="modal-delete-button" onClick={confirmDelete}>Delete</button>
                             <button className="modal-cancel-button" onClick={() => setShowConfirmModal(false)}>Cancel</button>
                         </div>
                     </div>
@@ -143,29 +143,29 @@ const UpdateForm = ({ product, onUpdate }) => {
     };
 
     return (
-        <form className="update-form" onSubmit={handleSubmit}>
-            <label>Product name</label>
-            <input
+        <form data-testid="product-form" className="update-form" onSubmit={handleSubmit}>
+            <label aria-label="product name" htmlFor="product-name">Product name</label>
+            <input id="product-name" aria-label="product name" data-testid="product-name"
                 className="form-input"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
             />
-            <label>Price</label>
-            <input
+            <label htmlFor="price">Price</label>
+            <input id="price" data-testid="product-price"
                 className="form-input"
                 name="price"
                 value={formData.price}
                 onChange={handleChange}
             />
-            <label>Description</label>
-            <textarea
+            <label htmlFor="description">Description</label>
+            <textarea id="description" data-testid="product-desc"
                 className="form-textarea"
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
             />
-            <button className="form-button" type="submit">Save changes</button>
+            <button data-testid="save" id="save" className="form-button" type="submit">Save changes</button>
             <button className="form-button cancel-button" type="button" onClick={handleCancel}>Cancel</button>
         </form>
     );

@@ -36,22 +36,19 @@ const ProductProvider = ({ children }) => {
     setProducts([...products, { ...newProduct, id: Date.now() }]);
   };
 
-  // const updateProduct = (id, updatedProduct) => {
-  //   setProducts(products.map((product) => (product.id === id ? updatedProduct : product)));
-  // };
-
   const updateProduct = (updatedProduct) => {
     setProducts(prevProducts => 
         prevProducts.map(p => p.id === updatedProduct.id ? updatedProduct : p)
     );
-};
+  };
 
   const deleteProduct = (id) => {
     setProducts(prevProducts => {
         const updatedProducts = prevProducts.filter(product => product.id !== id);
         return updatedProducts;
     });
-};
+  };
+  
 
   return (
     <ProductContext.Provider value={{ products, addProduct, updateProduct, deleteProduct }}>

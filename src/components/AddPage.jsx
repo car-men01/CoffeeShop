@@ -84,12 +84,12 @@ const AddPage = () => {
     <div>
         <div className="header-add">
             <h1>How can you make the shop better?</h1>
-            <p class="description-add">If you want to help us improve our online coffee shop, you can always add a new product suggestion to the menu. </p>
+            <p className="description-add">If you want to help us improve our online coffee shop, you can always add a new product suggestion to the menu. </p>
             <img src={coverAdd} alt="add-product-cover" className="cover-add" />
         </div>
 
         <div className="steps-add">
-            <h2 class="header-steps">Here are 4 easy steps how to add a product to our menu!</h2>
+            <h2 className="header-steps">Here are 4 easy steps how to add a product to our menu!</h2>
             <p>Ahoy, and thank you for lending a hand in making the Pirate Cafe even better! Adding a new treasure to our menu is as easy as hoisting the sails—just follow these steps: </p>
             <ol>
                 <li><b>Enter the Product Name</b> – Give your creation a name that stands out! Use letters and symbols to craft the perfect title that’ll catch the eye of every sea traveler.</li>
@@ -101,19 +101,50 @@ const AddPage = () => {
         </div>
         <div className="block-form">
             <form className="add-product-form" onSubmit={handleSubmit}>
-                <label>Product name</label>
-                <input type="text" name="name" value={product.name} onChange={handleChange} placeholder="Enter product name" required />
+                <label htmlFor="name">Product name</label>
+                <input 
+                  id="name" 
+                  type="text" 
+                  name="name" 
+                  value={product.name} 
+                  onChange={handleChange} 
+                  placeholder="Enter product name" 
+                  required 
+                />
 
-                <label>Price</label>
-                <input type="number" name="price" value={product.price} onChange={handleChange} placeholder="Enter price (€)" required />
+                <label htmlFor="price">Price</label>
+                <input 
+                  id="price" 
+                  type="number" 
+                  name="price" 
+                  value={product.price} 
+                  onChange={handleChange} 
+                  placeholder="Enter price (€)" 
+                  required 
+                />
 
-                <label>Category</label>
-                <input type="text" name="category" value={product.category} onChange={handleChange} placeholder="Enter category" required />
+                <label htmlFor="category">Category</label>
+                <input 
+                  id="category" 
+                  type="text" 
+                  name="category" 
+                  value={product.category} 
+                  onChange={handleChange} 
+                  placeholder="Enter category" 
+                  required 
+                />
 
-                <label>Description</label>
-                <textarea name="description" value={product.description} onChange={handleChange} placeholder="Enter product description" required></textarea>
+                <label htmlFor="description">Description</label>
+                <textarea 
+                  id="description" 
+                  name="description" 
+                  value={product.description} 
+                  onChange={handleChange} 
+                  placeholder="Enter product description" 
+                  required 
+                ></textarea>
 
-                <button type="submit" className="submit-btn">Submit</button>
+                <button id="submit" type="submit" className="submit-btn">Submit</button>
             </form>
 
             <div className="form-message">
@@ -127,3 +158,5 @@ const AddPage = () => {
 };
 
 export default AddPage;
+
+

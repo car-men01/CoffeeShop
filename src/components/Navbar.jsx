@@ -11,7 +11,7 @@ const Navbar = () => {
       <ul>
         <li></li>
         <li><button className="#menu" onClick={ () => navigate("/menu")}>Menu</button></li>
-        <li><button className="#cart">Shopping Cart</button></li>
+        {/* <li><button className="#cart">Shopping Cart</button></li> */}
         <li><button className="#home" onClick={ () => navigate("/")}>Home</button></li>
       </ul>
     </nav>
