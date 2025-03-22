@@ -12,16 +12,15 @@ import NavbarPages from "./components/NavbarPages";
 import './App.css';
 import MenuPage from "./components/MenuPage";
 import ProductDetail from "./components/ProductDetail";
-
+import ScrollToTop from './ScrollToTop';
 // import App from './App';
-
-
 
 
 function App() {
   return (
     <ProductProvider>
       <Router>
+      <ScrollToTop />
         <Routes>
           <Route path="/" element = {
             <div>

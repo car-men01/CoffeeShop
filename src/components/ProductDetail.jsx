@@ -12,7 +12,32 @@ const ProductDetail = () => {
 
     const [showConfirmModal, setShowConfirmModal] = useState(false); // State for delete confirmation modal
 
-    const product = products.find(p => p.id === parseInt(id));
+    // With this more flexible product finding approach:
+    const findProduct = () => {
+        // First try to find by direct match (for string IDs with prefixes like "gen_31")
+        let foundProduct = products.find(p => p.id === id);
+        
+        // Then try numeric comparison (for regular numeric IDs)
+        if (!foundProduct) {
+            // Try to parse the ID as a number, but only if it doesn't have a prefix
+            if (!id.includes('_')) {
+                const numericId = parseInt(id);
+                foundProduct = products.find(p => p.id === numericId);
+            }
+        }
+        
+        // Try to find in generated products cache if available
+        if (!foundProduct && window.generatedProductsCache) {
+            const cachedProducts = window.generatedProductsCache.getAll();
+            foundProduct = cachedProducts.find(p => p.id === id);
+        }
+        
+        return foundProduct;
+    };
+
+    const product = findProduct();
+
+    //const product = products.find(p => p.id === parseInt(id));
 
     if (!product) return <h2 className="product-not-found">Product not found</h2>;
 

@@ -215,9 +215,16 @@ body {
 .add-product-btn {
   background: #7C90A0;
   color: white;
-  padding: 10px 15px;
+  padding: 8px 16px;
   border: none;
   cursor: pointer;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.3s;
+}
+
+.add-product-btn:hover {
+  background-color: #384e31;
 }
 
 
@@ -344,26 +351,29 @@ body {
 /* Search & Filter */
 .search-filter-container {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
-  margin-top: 20px;
+  align-items: center; /* Ensures all elements are vertically aligned */
   margin-bottom: 20px;
-  font-size: 20px;
+  margin-top: 20px;
 }
 
 .search-bar {
-  /* flex-grow: 1; */
+  flex: 1;
+  min-width: 200px;
   padding: 8px 12px;
   font-size: 20px;
-  border: 2px solid #333;
+  border: 1px solid #333;
   border-radius: 5px;
   background-color: white;
   color: #333;
 }
 
-.filter-dropdown {
+.filter-dropdown, .sort-dropdown, .items-per-page-dropdown {
+  min-width: 150px;
   padding: 8px;
   font-size: 20px;
-  border: 2px solid #333;
+  border: 1px solid #333;
   border-radius: 5px;
   background-color: white;
   color: #333;
@@ -867,63 +877,243 @@ body {
 .sort-dropdown {
   padding: 8px;
   font-size: 20px;
-  border: 2px solid #333;
+  border: 1px solid #333;
   border-radius: 5px;
   background-color: white;
   color: #333;
 }
 
 
+/* Pagination Styles */
 
-
-
-
-
-
-
-
-/* 
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: #f5e6cc;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  text-align: center;
-}
-
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.modal-actions {
+.pagination-container {
   display: flex;
   justify-content: center;
+  align-items: center;
+  margin-top: 30px;
   gap: 10px;
 }
 
-.delete-confirm-button {
-  background-color: black;
+.pagination-button {
+  padding: 8px 16px;
+  border: none;
+  background-color: #f5f5f5;
+  color: #333;
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #e0e0e0;
+}
+
+.pagination-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-numbers {
+  display: flex;
+  gap: 5px;
+}
+
+.pagination-number {
+  padding: 8px 14px;
+  border: none;
+  background-color: #f5f5f5;
+  color: #333;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.pagination-number:hover {
+  background-color: #e0e0e0;
+}
+
+.pagination-number.active {
+  background-color: #7C90A0;
   color: white;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
 }
 
-.cancel-button {
-  background-color: lightgray;
-  padding: 10px;
-  border: none;
-  cursor: pointer;
+.pagination-info {
+  text-align: center;
+  margin-top: 15px;
+  color: #666;
+  font-size: 0.9rem;
 }
 
-.success {
-  background-color: #dff0d8;
-  border: 1px solid #3c763d;
-} */
+.items-per-page-dropdown {
+  padding: 8px 12px;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background-color: white;
+  cursor: pointer;
+  color:#333;
+  font-size: 20px;
+}
+
+/* Statistics Button and Chart Styles */
+
+
+/* Ensure buttons match dropdown dimensions */
+.statistics-btn, .add-product-btn {
+  min-width: 150px; /* Match the dropdown width */
+  padding: 8px; /* Match the dropdown padding */
+  font-size: 20px; /* Match the dropdown font size */
+  border: 1px solid #333; /* Match the dropdown border */
+  border-radius: 5px; /* Match the dropdown border radius */
+  color: white; /* Default text color */
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s;
+  height: 40px; /* Match the height of dropdowns */
+  line-height: 24px; /* Center text vertically */
+  box-sizing: border-box; /* Ensure consistent sizing */
+  background-color: #7C90A0; /* Default background for add product button */
+}
+
+
+.statistics-container {
+  display: inline-block;
+  margin-top: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.statistics-btn.active {
+  background-color: #5a6f7a;
+}
+
+
+.add-product-btn:hover, .statistics-btn:hover {
+  background-color: #5a6f7a;
+}
+
+.statistics-chart-container {
+  width: 100%;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.chart-wrapper {
+  height: 300px;
+  width: 100%;
+}
+
+.generating-status {
+  text-align: center;
+  margin-top: 10px;
+  font-style: italic;
+  color: #666;
+}
+
+.generating-status p {
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+      opacity: 0.6;
+  }
+  50% {
+      opacity: 1;
+  }
+  100% {
+      opacity: 0.6;
+  }
+}
+
+/* Generation button styles */
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.generate-btn {
+  padding: 8px;
+  font-size: 20px;
+  border: 1px solid #333;
+  border-radius: 5px;
+  background-color: #7C90A0;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  min-width: 150px;
+  height: 40px;
+  line-height: normal;
+  box-sizing: border-box;
+  margin: 0;
+  vertical-align: middle;
+}
+
+.generate-btn:hover {
+  background-color: #5a6f7a;
+}
+
+.generate-btn.active {
+  background-color: #5a6f7a;
+}
+
+.generation-indicator {
+  margin: 10px 0;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-left: 4px solid #7C90A0;
+  border-radius: 4px;
+  animation: pulse 1.5s infinite;
+}
+
+.generation-indicator p {
+  margin: 0;
+  font-style: italic;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+/* Animation for new products */
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.charts-container {
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.chart-box {
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+  transition: transform 0.3s ease;
+}
+
+.chart-box:hover {
+  transform: translateY(-5px);
+}
+
+
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
