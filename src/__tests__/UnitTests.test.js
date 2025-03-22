@@ -179,8 +179,22 @@ describe("MenuPage Component", () => {
         expect(screen.queryByText("Espresso")).not.toBeInTheDocument(); // Should be filtered out
     });
 
+    test("sorts products by price ascending", () => {
+      renderWithContext(<MenuPage />);
       
-    test("sorts products by price", () => {
+      const sortDropdown = screen.getByRole("combobox", { name: /sort by price/i });
+      fireEvent.change(sortDropdown, { target: { value: "asc" } });
+      
+      const coffeeCategoryHeader = screen.getByRole('heading', { name: /Classic Coffee/i });
+      expect(coffeeCategoryHeader).toBeInTheDocument(); // ensure the "Classic coffee" category is rendered
+      
+      const coffeeCategory = coffeeCategoryHeader.closest('div'); // get the closest category container div
+      const coffeeProducts = within(coffeeCategory).getAllByText(/€$/).map(el => parseFloat(el.textContent.replace(' €', '')));
+      
+      expect(coffeeProducts).toEqual([...coffeeProducts].sort((a, b) => a - b));
+  });
+      
+    test("sorts products by price descending", () => {
         renderWithContext(<MenuPage />);
         
         const sortDropdown = screen.getByRole("combobox", { name: /sort by price/i });
