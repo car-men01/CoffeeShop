@@ -1,8 +1,5 @@
-// import { StrictMode } from 'react';
-// import { createRoot } from 'react-dom/client';
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import ProductProvider from "./ProductContext"; 
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import MenuSection from "./components/MenuSection";
@@ -18,7 +15,6 @@ import ScrollToTop from './ScrollToTop';
 
 function App() {
   return (
-    <ProductProvider>
       <Router>
       <ScrollToTop />
         <Routes>
@@ -54,7 +50,6 @@ function App() {
           />
         </Routes>
       </Router>
-    </ProductProvider>
   );
 }
 

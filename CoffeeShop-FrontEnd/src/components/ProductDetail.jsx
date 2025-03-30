@@ -1,60 +1,77 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ProductContext } from "../ProductContext";
+import axios from "axios";
 
 const ProductDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const { products, setProducts } = useContext(ProductContext);
+    
+    // State for product data
+    const [product, setProduct] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-    const { deleteProduct } = useContext(ProductContext); // Get delete function from context
-    const { updateProduct } = useContext(ProductContext); // Get update function from context
+    // Fetch product data from backend when component mounts
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                setLoading(true);
+                const response = await axios.get(`http://localhost:5000/products/${id}`);
+                setProduct(response.data);
+                setLoading(false);
+            } catch (err) {
+                console.error("Error fetching product:", err);
+                setError("Failed to load product. It may have been deleted or does not exist.");
+                setLoading(false);
+            }
+        };
 
-    const [showConfirmModal, setShowConfirmModal] = useState(false); // State for delete confirmation modal
+        fetchProduct();
+    }, [id]);
 
-    // With this more flexible product finding approach:
-    const findProduct = () => {
-        // First try to find by direct match (for string IDs with prefixes like "gen_31")
-        let foundProduct = products.find(p => p.id === id);
-        
-        // Then try numeric comparison (for regular numeric IDs)
-        if (!foundProduct) {
-            // Try to parse the ID as a number, but only if it doesn't have a prefix
-            if (!id.includes('_')) {
-                const numericId = parseInt(id);
-                foundProduct = products.find(p => p.id === numericId);
+    // Handle deletion
+    const handleDelete = () => {
+        setShowConfirmModal(true);
+    };
+
+    const confirmDelete = async () => {
+        try {
+            await axios.delete(`http://localhost:5000/products/${id}`);
+            navigate("/menu");
+        } catch (err) {
+            console.error("Error deleting product:", err);
+            alert("Failed to delete product. Please try again.");
+        }
+    };
+
+    // Handle update
+    const handleUpdate = async (updatedFields) => {
+        try {
+            // Send only the updated fields to the backend
+            const updatedProduct = await axios.put(`http://localhost:5000/products/${id}`, updatedFields);
+            setProduct(updatedProduct.data); // Update local state with returned data
+            navigate("/menu");  // Redirect to menu after saving
+        } catch (err) {
+            console.error("Error updating product:", err);
+            
+            // Display error message from backend if available
+            if (err.response && err.response.data && err.response.data.error) {
+                alert(err.response.data.error);
+            } else {
+                alert("Failed to update product. Please try again.");
             }
         }
-        
-        // Try to find in generated products cache if available
-        if (!foundProduct && window.generatedProductsCache) {
-            const cachedProducts = window.generatedProductsCache.getAll();
-            foundProduct = cachedProducts.find(p => p.id === id);
-        }
-        
-        return foundProduct;
     };
 
-    const product = findProduct();
-
-    //const product = products.find(p => p.id === parseInt(id));
-
+    // Show loading state
+    if (loading) return <div className="loading">Loading product details...</div>;
+    
+    // Show error state
+    if (error) return <h2 className="product-not-found">{error}</h2>;
+    
+    // Show not found state
     if (!product) return <h2 className="product-not-found">Product not found</h2>;
-
-    const handleDelete = () => {
-        setShowConfirmModal(true); // Show confirmation modal
-    };
-
-    const confirmDelete = () => {
-        deleteProduct(parseInt(id)); 
-        navigate("/menu");  // Redirect to menu after deleting
-    };
-
-    const handleUpdate = (updatedFields) => {
-        const updatedProduct = { ...product, ...updatedFields };
-        updateProduct(updatedProduct);
-        navigate("/menu");  // Redirect to menu after saving
-    };
 
     return (
         <div>
@@ -64,7 +81,7 @@ const ProductDetail = () => {
             </div>
             <div className="product-detail-container">
                 <div className="delete-container">
-                    <img className="product-image" src={product.image} alt={product.name} />
+                    <img className="product-image" src={`http://localhost:5000${product.image}`} alt={product.name} />
                     <div className="title-and-info">
                         <h2 className="delete-p-title">Delete the selected product</h2>
                         <div className="product-info">
@@ -82,7 +99,7 @@ const ProductDetail = () => {
                         <h2 className="update-p-title">Edit the selected product</h2>
                         <UpdateForm product={product} onUpdate={handleUpdate} />
                     </div>
-                    <img className="product-image" src={product.image} alt={product.name} />
+                    <img className="product-image" src={`http://localhost:5000${product.image}`} alt={product.name} />
                 </div>
             </div>
 
@@ -109,57 +126,31 @@ const UpdateForm = ({ product, onUpdate }) => {
         description: product.description,
     });
 
-    const navigate = useNavigate();
-
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Trim input values to avoid leading/trailing spaces
-        const name = formData.name.trim();
-        const price = formData.price.trim();
-        const description = formData.description.trim();
+        try {
+            // Convert price to number for API
+            const updatedData = {
+                name: formData.name,
+                price: parseFloat(formData.price),
+                description: formData.description,
+                category: product.category // Keep the original category
+            };
 
-        // Check if all fields are filled
-        if (!name || !price || !description) {
-            alert("Please fill in all fields!");
-            return;
+            // Submit to parent component which handles the API call
+            onUpdate(updatedData);
+        } catch (err) {
+            console.error("Error in form submission:", err);
         }
-
-        // Check if name and description are at least 3 characters long
-        if (name.length < 3) {
-            alert("Product name must be at least 3 characters long!");
-            return;
-        }
-
-        if (description.length < 3) {
-            alert("Description must be at least 3 characters long!");
-            return;
-        }
-
-        // Validate price: should be a valid float
-        const parsedPrice = parseFloat(price);
-        if (isNaN(parsedPrice) || parsedPrice <= 0) {
-            alert("Please enter a valid price (e.g., 5 or 4.99)!");
-            return;
-        }
-
-        // Ensure name contains only letters and symbols (no numbers)
-        const containsNumbers = (str) => str.split("").some(char => !isNaN(char) && char !== " ");
-        if (containsNumbers(name)) {
-            alert("Product name must only contain letters and symbols, no numbers!");
-            return;
-        }
-
-        // If all checks pass, update the product
-        onUpdate({ name, price: parsedPrice, description });
     };
 
     const handleCancel = () => {
-        // Reset the form to the original product data
+        // Reset form to original product data
         setFormData({
             name: product.name,
             price: product.price,
@@ -170,21 +161,31 @@ const UpdateForm = ({ product, onUpdate }) => {
     return (
         <form data-testid="product-form" className="update-form" onSubmit={handleSubmit}>
             <label aria-label="product name" htmlFor="product-name">Product name</label>
-            <input id="product-name" aria-label="product name" data-testid="product-name"
+            <input 
+                id="product-name" 
+                aria-label="product name" 
+                data-testid="product-name"
                 className="form-input"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
             />
             <label htmlFor="price">Price</label>
-            <input id="price" data-testid="product-price"
+            <input 
+                id="price" 
+                data-testid="product-price"
                 className="form-input"
                 name="price"
+                type="number"
+                step="0.01"
+                min="0.01"
                 value={formData.price}
                 onChange={handleChange}
             />
             <label htmlFor="description">Description</label>
-            <textarea id="description" data-testid="product-desc"
+            <textarea 
+                id="description" 
+                data-testid="product-desc"
                 className="form-textarea"
                 name="description"
                 value={formData.description}

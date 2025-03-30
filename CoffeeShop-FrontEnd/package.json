@@ -22,10 +22,14 @@
       "\\.(jpg|jpeg|png|webp|svg)$": "<rootDir>/src/jestMock.js"
     },
     "collectCoverage": true,
-    "coverageReporters": ["text", "lcov"]
+    "coverageReporters": [
+      "text",
+      "lcov"
+    ]
   },
   "dependencies": {
     "@faker-js/faker": "^7.6.0",
+    "axios": "^1.8.4",
     "chart.js": "^4.4.8",
     "faker": "^6.6.6",
     "react": "^19.0.0",
