@@ -362,7 +362,7 @@ const MenuPage = () => {
 
     // Update your generateProductAsync function
     const generateProductAsync = (threadId) => {
-        console.log(`Thread ${threadId} generating a product...`);
+        // console.log(`Thread ${threadId} generating a product...`);
         
         // Simulate async work with setTimeout
         setTimeout(() => {
